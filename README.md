@@ -22,6 +22,7 @@ Statiou, D. A., & Ηatzopoulos, P. (2025). Copula Toolbox: An Interactive GUI in
 ## 🚀 Installation
 
 Just clone the repository and open the toolbox script:
+then run sampledata.m or input your data
 
 ```bash
 git clone https://github.com/Statiou/Copula-Toolbox.git

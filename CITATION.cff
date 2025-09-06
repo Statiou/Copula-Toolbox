@@ -1,19 +1,22 @@
-cff-version: 1.2.0
-title: Copula Toolbox (MATLAB UI)
-message: If you use this software, please cite it as below.
+cff-version: "1.2.0"
+message: "If you use this software, please cite it as below."
+title: "Copula Toolbox (MATLAB UI)"
+version: "0.1.0"
+date-released: "2025-09-06"
+
 authors:
-  - family-names: Statiou
-    given-names: D. Anastasios
-    orcid: https://orcid.org/0000-0000-0000-0000
-license: MIT
-repository-code: https://github.com/USER/REPO
-version: 0.1.0
-date-released: 2025-09-06
+  - family-names: "Statiou"
+    given-names: "D. Anastasios"
+    orcid: "https://orcid.org/0009-0005-9581-2064"
+
+license: "MIT"
+repository-code: "https://github.com/USER/REPO"
+
 preferred-citation:
   type: software
   authors:
-    - family-names: Statiou
-      given-names: D. Anastasios
-  title: Copula Toolbox (MATLAB UI): Fitting, diagnostics, simulation, and GAS τ-forecasting
+    - family-names: "Statiou"
+      given-names: "D. Anastasios"
+  title: "Copula Toolbox (MATLAB UI): Fitting, diagnostics, simulation, and GAS τ-forecasting"
   year: 2025
-  url: https://github.com/USER/REPO
+  url: "https://github.com/USER/REPO"

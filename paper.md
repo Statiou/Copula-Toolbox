@@ -56,76 +56,88 @@ The target audience is applied researchers and students who need a **click-throu
 
 
 
-
-
 ## Mathematics / Implementation
 
-Let $U_t \in (0,1)^2$ be the PITs of the selected pair under the chosen marginals.
+Let $U_t \in (0,1)^2$ be the PITs of the selected pair under the chosen marginals.  
 For elliptical copulas (Gaussian or $t$) we link correlation and Kendall’s $\tau$ via
-$$
-\rho_t=\tanh(f_t), \qquad \tau_t=\tfrac{2}{\pi}\arcsin(\rho_t),
-$$
-where $f_t\in\mathbb{R}$ is a latent, time-varying parameter.
 
-We use a **GAS(1,1)** update for $f_t$:
+$$
+\rho_t=\tanh(f_t), \qquad \tau_t=\tfrac{2}{\pi}\arcsin(\rho_t).
+$$
+
+We use a GAS(1,1) update for $f_t$:
+
 $$
 f_t=\omega+\beta f_{t-1}+\gamma^\top X_{t-1}+\alpha\,s_t,
 $$
-with exogenous regressors $X_t=\lvert\Phi^{-1}(U_t)\rvert$ (componentwise standard-normal quantiles in
-absolute value) and score term
+
+with exogenous regressors $X_t=\lvert \Phi^{-1}(U_t)\rvert$ (componentwise) and score
+
 $$
-s_t=\frac{\partial\log c(U_t;\rho_t)}{\partial f_t}
-   =\frac{\partial\log c(U_t;\rho_t)}{\partial \rho_t}\,(\cosh(f_t))^{-2},
+s_t=\frac{\partial \log c(U_t;\rho_t)}{\partial f_t}
+   =\frac{\partial \log c(U_t;\rho_t)}{\partial \rho_t}\,(\cosh(f_t))^{-2},
 $$
+
 where $c(\cdot)$ is the copula density (Gaussian or $t$).
 
-**Estimation.** For parameters $\theta=(\omega,\alpha,\beta,\gamma)$, we maximize the log-likelihood on a
-training window:
+**Estimation.** We maximize the training-window log-likelihood
+
 $$
-\mathcal{L}(\theta)=\sum_{t=t_0}^{T}\log c\!\big(U_t;\rho_t(\theta)\big),\qquad
-\rho_t(\theta)=\tanh\!\big(f_t(\theta)\big).
+\mathcal{L}(\theta)=\sum_{t=t_0}^{T}\log c\!\big(U_t;\rho_t(\theta)\big),
+\qquad \rho_t(\theta)=\tanh\!\big(f_t(\theta)\big),
 $$
 
+for $\theta=(\omega,\alpha,\beta,\gamma)$.
+
 **One-step prediction.**
+
 $$
-f_{t+1\mid t}=\omega+\beta f_t+\gamma^\top X_t, \qquad
+f_{t+1\mid t}=\omega+\beta f_t+\gamma^\top X_t,
+\qquad
 \hat{\tau}_{t+1}=\tfrac{2}{\pi}\arcsin\!\big(\tanh(f_{t+1\mid t})\big).
 $$
 
-**Split-conformal bands.** On a calibration set $\mathcal{C}$, compute residuals
-$r_t=\lvert\tau_t-\hat{\tau}_t\rvert$ for $t\in\mathcal{C}$ and their empirical quantile $q_{1-\alpha}$.
-The distribution-free $(1-\alpha)$ band is
+**Split-conformal bands.** On a calibration set $\mathcal{C}$, take residuals
+$r_t=\lvert\tau_t-\hat{\tau}_t\rvert$ and their quantile $q_{1-\alpha}$. The $(1-\alpha)$ band is
+
 $$
 \big[\hat{\tau}_{t+1}-q_{1-\alpha},\;\hat{\tau}_{t+1}+q_{1-\alpha}\big].
 $$
 
 **Tail dependence (2D).** By definition
+
 $$
-\lambda_L=\lim_{u\downarrow 0}\frac{C(u,u)}{u}, \qquad
+\lambda_L=\lim_{u\downarrow 0}\frac{C(u,u)}{u},
+\qquad
 \lambda_U=\lim_{u\uparrow 1}\frac{1-2u+C(u,u)}{1-u}.
 $$
-Gaussian has $\lambda_L=\lambda_U=0$. For a $t$-copula with correlation $\rho$ and degrees of freedom $\nu$:
+
+For a $t$-copula with correlation $\rho$ and dof $\nu$:
+
 $$
 \lambda_L=\lambda_U=
 2\,T_{\nu+1}\!\left(-\sqrt{\frac{(\nu+1)(1-\rho)}{1+\rho}}\right),
 $$
-where $T_{\nu+1}$ is the CDF of a Student-$t$ with $\nu{+}1$ dof.
-Archimedeans: Clayton $(\lambda_L=2^{-1/\theta},\,\lambda_U=0)$,
-Gumbel $(\lambda_L=0,\,\lambda_U=2-2^{1/\theta})$, Frank $(0,0)$.
+
+where $T_{\nu+1}$ is the CDF of Student-$t$ with $\nu{+}1$ dof.  
+Gaussian: $\lambda_L=\lambda_U=0$. Clayton: $(\lambda_L=2^{-1/\theta},\,\lambda_U=0)$;
+Gumbel: $(\lambda_L=0,\,\lambda_U=2-2^{1/\theta})$; Frank: $(0,0)$.
 
 **Rosenblatt transform (2D GOF).**
+
 $$
-V_1=U_1,\qquad V_2=\frac{\partial C(u_1,u_2)}{\partial u_1}\Big|_{(u_1,u_2)=(U_1,U_2)},
+V_1=U_1,\qquad
+V_2=\frac{\partial C(u_1,u_2)}{\partial u_1}\Big|_{(u_1,u_2)=(U_1,U_2)},
 $$
+
 so $(V_1,V_2)\sim\mathrm{Unif}(0,1)^2$ under a correct model (checked with KS and rank-correlation diagnostics).
 
-**Numerical stability.** For multivariate Gaussian/$t$, if the fitted correlation $\widehat{R}$ is not
-positive-definite, we apply eigenvalue clipping and rescale to unit diagonals:
-$$
-\widehat{R}=V D V^\top,\quad D^+=\max(D,\varepsilon I),\quad
-R^\ast=V D^+ V^\top,\quad R^\ast_{ii}=1.
-$$
+**Numerical stability.** If the fitted correlation $\widehat{R}$ is not positive-definite, project to the nearest PD matrix and rescale:
 
+$$
+\widehat{R}=V D V^{\top},\quad D^+=\max(D,\varepsilon I),\quad
+R^\ast=V D^+ V^{\top},\quad R^\ast_{ii}=1.
+$$
 
 
 

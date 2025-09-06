@@ -58,87 +58,75 @@ The target audience is applied researchers and students who need a **click-throu
 
 
 
-
 ## Mathematics / Implementation
 
-Let $U_t \in (0,1)^2$ be PITs of the selected pair under the chosen marginals.
-For elliptical copulas (Gaussian or $t$), we link correlation and Kendall’s $\tau$ through
-$\rho_t = \tanh(f_t)$ and $\tau_t = \tfrac{2}{\pi}\arcsin(\rho_t)$, where $f_t \in \mathbb{R}$ is the
-time–varying latent parameter.
+Let $U_t \in (0,1)^2$ be the PITs of the selected pair under the chosen marginals.
+For elliptical copulas (Gaussian or $t$) we link correlation and Kendall’s $\tau$ via
+$$
+\rho_t=\tanh(f_t), \qquad \tau_t=\tfrac{2}{\pi}\arcsin(\rho_t),
+$$
+where $f_t\in\mathbb{R}$ is a latent, time-varying parameter.
 
-We use a **GAS(1,1)** update on $f_t$:
+We use a **GAS(1,1)** update for $f_t$:
 $$
-\begin{aligned}
-f_t &= \omega + \beta f_{t-1} + \gamma^\top X_{t-1} + \alpha\, s_t,\\[2pt]
-s_t &= \frac{\partial \log c(U_t;\rho_t)}{\partial f_t}
-    = \frac{\partial \log c(U_t;\rho_t)}{\partial \rho_t}\,\mathrm{sech}^2(f_t),
-\end{aligned}
+f_t=\omega+\beta f_{t-1}+\gamma^\top X_{t-1}+\alpha\,s_t,
 $$
-where $c(\cdot)$ is the copula density (Gaussian or $t$) and
-$X_{t}=\lvert \Phi^{-1}(U_{t})\rvert$ are simple exogenous regressors built from the PITs
-(componentwise standard–normal quantiles in absolute value).
-We initialize from a rolling window of length $W$:
+with exogenous regressors $X_t=\lvert\Phi^{-1}(U_t)\rvert$ (componentwise standard-normal quantiles in
+absolute value) and score term
 $$
-\tau_0=\mathrm{Kendall}\big(U_{1:W,1},U_{1:W,2}\big),\quad
-\rho_0=\sin\!\big(\tfrac{\pi}{2}\tau_0\big),\quad
-f_0=\operatorname{atanh}(\rho_0).
+s_t=\frac{\partial\log c(U_t;\rho_t)}{\partial f_t}
+   =\frac{\partial\log c(U_t;\rho_t)}{\partial \rho_t}\,(\cosh(f_t))^{-2},
 $$
+where $c(\cdot)$ is the copula density (Gaussian or $t$).
 
-**Estimation.** Given parameters $\theta=(\omega,\alpha,\beta,\gamma)$, the (training–window)
-log-likelihood is
+**Estimation.** For parameters $\theta=(\omega,\alpha,\beta,\gamma)$, we maximize the log-likelihood on a
+training window:
 $$
 \mathcal{L}(\theta)=\sum_{t=t_0}^{T}\log c\!\big(U_t;\rho_t(\theta)\big),\qquad
-\rho_t(\theta)=\tanh(f_t(\theta)).
-$$
-We minimize $-\mathcal{L}(\theta)$ numerically. For prediction we use the one-step recursion
-$$
-f_{t+1|t}=\omega+\beta f_t+\gamma^\top X_t,\qquad
-\hat{\tau}_{t+1}=\tfrac{2}{\pi}\arcsin\!\big(\tanh(f_{t+1|t})\big).
+\rho_t(\theta)=\tanh\!\big(f_t(\theta)\big).
 $$
 
-**Split-conformal bands.** On a hold-out calibration set $\mathcal{C}$ we compute absolute residuals
-$r_t=\lvert \tau_t-\hat{\tau}_t\rvert$ for $t\in\mathcal{C}$ and their empirical quantile
-$q_{1-\alpha}$. The distribution-free $(1-\alpha)$ band is
+**One-step prediction.**
 $$
-\big[\hat{\tau}_{t+1}-q_{1-\alpha},\;\hat{\tau}_{t+1}+q_{1-\alpha}\big],
+f_{t+1\mid t}=\omega+\beta f_t+\gamma^\top X_t, \qquad
+\hat{\tau}_{t+1}=\tfrac{2}{\pi}\arcsin\!\big(\tanh(f_{t+1\mid t})\big).
 $$
-with analogous bands for $90\%$ and $95\%$ by using the $0.90$ and $0.95$ quantiles.
 
-**Tail dependence.** For a bivariate copula $C$,
+**Split-conformal bands.** On a calibration set $\mathcal{C}$, compute residuals
+$r_t=\lvert\tau_t-\hat{\tau}_t\rvert$ for $t\in\mathcal{C}$ and their empirical quantile $q_{1-\alpha}$.
+The distribution-free $(1-\alpha)$ band is
 $$
-\lambda_L=\lim_{u\downarrow 0}\frac{C(u,u)}{u},\qquad
+\big[\hat{\tau}_{t+1}-q_{1-\alpha},\;\hat{\tau}_{t+1}+q_{1-\alpha}\big].
+$$
+
+**Tail dependence (2D).** By definition
+$$
+\lambda_L=\lim_{u\downarrow 0}\frac{C(u,u)}{u}, \qquad
 \lambda_U=\lim_{u\uparrow 1}\frac{1-2u+C(u,u)}{1-u}.
 $$
-Gaussian has $\lambda_L=\lambda_U=0$. For a $t$-copula with correlation $\rho$ and $\nu$ degrees of
-freedom,
+Gaussian has $\lambda_L=\lambda_U=0$. For a $t$-copula with correlation $\rho$ and degrees of freedom $\nu$:
 $$
 \lambda_L=\lambda_U=
 2\,T_{\nu+1}\!\left(-\sqrt{\frac{(\nu+1)(1-\rho)}{1+\rho}}\right),
 $$
-where $T_{\nu+1}$ is the CDF of a Student-$t$ with $\nu\!+\!1$ dof. For Archimedeans:
-Clayton $\big(\lambda_L=2^{-1/\theta},\;\lambda_U=0\big)$,
-Gumbel $\big(\lambda_L=0,\;\lambda_U=2-2^{1/\theta}\big)$,
-Frank $(\lambda_L=\lambda_U=0)$.
+where $T_{\nu+1}$ is the CDF of a Student-$t$ with $\nu{+}1$ dof.
+Archimedeans: Clayton $(\lambda_L=2^{-1/\theta},\,\lambda_U=0)$,
+Gumbel $(\lambda_L=0,\,\lambda_U=2-2^{1/\theta})$, Frank $(0,0)$.
 
-**Rosenblatt transform (2D GOF).** With fitted parameters, define
+**Rosenblatt transform (2D GOF).**
 $$
-V_1=U_1,\qquad V_2=\frac{\partial C(u_1,u_2)}{\partial u_1}\Big|_{(u_1,u_2)=(U_{1},U_{2})}.
+V_1=U_1,\qquad V_2=\frac{\partial C(u_1,u_2)}{\partial u_1}\Big|_{(u_1,u_2)=(U_1,U_2)},
 $$
-Under a correct model, $(V_1,V_2)$ are i.i.d. $\mathrm{Unif}(0,1)$; we check uniformity via KS tests
-and inspect independence via rank-correlation diagnostics.
+so $(V_1,V_2)\sim\mathrm{Unif}(0,1)^2$ under a correct model (checked with KS and rank-correlation diagnostics).
 
-**Numerical stability.** For multivariate $t$/Gaussian fits, if the estimated correlation
-$\widehat{R}$ is not positive-definite, we project to the nearest PD matrix by eigenvalue clipping
-and rescale to unit diagonals:
+**Numerical stability.** For multivariate Gaussian/$t$, if the fitted correlation $\widehat{R}$ is not
+positive-definite, we apply eigenvalue clipping and rescale to unit diagonals:
 $$
 \widehat{R}=V D V^\top,\quad D^+=\max(D,\varepsilon I),\quad
-R^{\ast}=V D^+ V^\top,\quad R^{\ast}_{ii}=1.
+R^\ast=V D^+ V^\top,\quad R^\ast_{ii}=1.
 $$
 
-**Empirical marginals.** When using non-parametric marginals, we set
-$U_{i,j}=\mathrm{rank}(X_{i,j})/(n+1)$. For pairwise diagnostics (e.g., copula PDF/CDF on $U$,
-Kendall plots) we refit the copula **on the selected pair** to avoid index mismatches when the
-global fit used a different column subset.
+
 
 
 # Quality control

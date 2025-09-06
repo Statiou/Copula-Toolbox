@@ -1,4 +1,4 @@
-function copula_toolbox_onefile
+function fitcopulatoolbox
 % Copula Toolbox (single-file UI) — extended & fixed
 % -------------------------------------------------------------------------
 % Features
@@ -1134,3 +1134,4 @@ end
         end
     end
 end
+

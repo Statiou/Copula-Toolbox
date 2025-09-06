@@ -97,12 +97,20 @@ f_{t+1\mid t}=\omega+\beta f_t+\gamma^\top X_t,
 \hat{\tau}_{t+1}=\tfrac{2}{\pi}\arcsin\!\big(\tanh(f_{t+1\mid t})\big).
 $$
 
-**Split-conformal bands.** On a calibration set $\mathcal{C}$, take residuals $r_t=\lvert\tau_t-\hat{\tau}_t\rvert$ and their quantile $q_{1-\alpha}$. The $(1-\alpha)$ band is
-
+**Split-conformal bands.** On a calibration set $\mathcal{C}$ we define
 
 $$
-\big[\hat{\tau}_{t+1}-q_{1-\alpha},\;\hat{\tau}_{t+1}+q_{1-\alpha}\big].
+r_t = \lvert \tau_t - \hat{\tau}_t \rvert,
+\qquad
+q_{1-\alpha} = \mathrm{Quantile}_{1-\alpha}\{\, r_t : t \in \mathcal{C} \,\}.
 $$
+
+The $(1-\alpha)$ band is
+
+$$
+\big[\, \hat{\tau}_{t+1} - q_{1-\alpha},\; \hat{\tau}_{t+1} + q_{1-\alpha} \,\big].
+$$
+
 
 **Tail dependence (2D).** By definition
 

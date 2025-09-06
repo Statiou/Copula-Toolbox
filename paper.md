@@ -8,10 +8,10 @@ tags:
   - MATLAB
 authors:
   - name: D. Anastasios Statiou
-    orcid: 0000-0000-0000-0000
+    orcid: 0009-0005-9581-2064
     affiliation: 1
 affiliations:
-  - name: Department of ________, ______ University
+  - name: Department of Mathematics,  University of Aegean
     index: 1
 date: 2025-09-06
 bibliography: paper.bib

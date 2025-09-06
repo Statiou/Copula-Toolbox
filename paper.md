@@ -55,9 +55,11 @@ The target audience is applied researchers and students who need a **click-throu
 - **I/O**: export U/R/fit; save/load session; export current axes PNG; quick text/figure report.
 
 
+
+
+
+
 ## Mathematics / Implementation
-
-
 
 Let $U_t \in (0,1)^2$ be PITs of the selected pair under the chosen marginals. 
 For the elliptical case, define $\rho_t = \tanh(f_t)$ and $\tau_t = \frac{2}{\pi}\arcsin(\rho_t)$.
@@ -66,16 +68,13 @@ $$
 \begin{aligned}
 f_t &= \omega + \beta f_{t-1} + \gamma^\top X_{t-1} + \alpha\, s_t,\\[2pt]
 s_t &= \frac{\partial \log c(U_t; \rho_t)}{\partial f_t}
-    = \frac{\partial \log c}{\partial \rho_t}\,\operatorname{sech}^2(f_t),
+    = \frac{\partial \log c}{\partial \rho_t}\,\mathrm{sech}^2(f_t).
 \end{aligned}
 $$
 
 where $c(\cdot)$ is the copula density (Gaussian or $t$), and $X_{t-1}=\lvert \Phi^{-1}(U_{t-1})\rvert$.
 We estimate $\theta=(\omega,\alpha,\beta,\gamma)$ by minimizing the negative log-likelihood over a training window; 
-a **split-conformal** calibration on recent residuals $\lvert \tau_t - \hat{\tau}_t\rvert$ yields level-$(1-\alpha)$ bands [@Vovk2005; @Angelopoulos2023; @Creal2013].
-We estimate $\theta=(\omega,\alpha,\beta,\gamma)$ by minimizing the negative log-likelihood over a training window; a **split-conformal** calibration on recent residuals $\lvert \tau_t - \hat{\tau}_t\rvert$ yields level-$(1-\alpha)$ bands [@Vovk2005; @Angelopoulos2023; @Creal2013].
-
-We estimate \(\theta=(\omega,\alpha,\beta,\gamma)\) by minimizing the negative log-likelihood over a training window; a **split-conformal** calibration on recent residuals \(\lvert \tau_t - \hat\tau_t\rvert\) yields level-\((1-\alpha)\) bands [@Vovk2005; @Angelopoulos2023].
+a split-conformal calibration on recent residuals $\lvert \tau_t - \hat{\tau}_t\rvert$ yields level-$(1-\alpha)$ bands [@Vovk2005; @Angelopoulos2023; @Creal2013].
 
 For multivariate t, the fitted correlation \(R\) is projected to the nearest positive-definite matrix for numerical stability (Higham’s method), with unit diagonals. Tail-dependence is computed analytically where available (e.g., Gaussian λ_L=λ_U=0; t-copula symmetric non-zero as a function of ρ and ν; Clayton lower-tail, Gumbel upper-tail; Frank both zero) [@Joe2014; @Nelsen2006].
 

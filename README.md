@@ -4,7 +4,7 @@
 Supports multivariate Gaussian/**t** (d ≥ 2) and bivariate Archimedean (Clayton, Frank, Gumbel).  
 Includes tail-dependence, PIT diagnostics, empirical copula plots, GAS(1,1) τ-forecasting with split-conformal bands, bootstrap CIs, K-fold CV, and more.
 
-> The splash screen shows: **“Statiou. D. Anastasios.”** as requested by the author.
+
 
 ---
 
